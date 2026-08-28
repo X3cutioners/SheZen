@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from "react";
 import { exportLocalVaultFile, importLocalVaultFile, type SheZenBackupFile } from "@/lib/local-db";
 import { isBiometricsSupported, isBiometricsEnrolled, enrollBiometrics, disableBiometrics } from "@/lib/crypto/biometrics";
 import { Download, Upload, Fingerprint, Smartphone, Check, AlertCircle, Loader2, Eye, EyeOff, HardDrive } from "lucide-react";
+import { usePWAInstall, IOSInstallModal } from "@/components/PWAInstallPrompt";
 
 export function LocalBackupPanel() {
   // Local File Backup
@@ -32,28 +33,11 @@ export function LocalBackupPanel() {
   const [bioLoading, setBioLoading] = useState(false);
 
   // PWA Install
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const { isStandalone, triggerPrompt, showIOSModal, setShowIOSModal } = usePWAInstall();
 
   useEffect(() => {
     isBiometricsSupported().then(setBioSupported);
     setBioEnrolled(isBiometricsEnrolled());
-
-    // Listen for PWA install prompt
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true);
-    }
-
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    };
   }, []);
 
   // ─── Local Export ─────────────────────────────────────────────────────────
@@ -149,21 +133,6 @@ export function LocalBackupPanel() {
     disableBiometrics();
     setBioEnrolled(false);
     setEnrollingBio(false);
-  }
-
-  // ─── PWA Install ──────────────────────────────────────────────────────────
-
-  async function handleInstallPWA() {
-    if (!deferredPrompt) {
-      alert("To install SheZen on iOS Safari, tap Share (box with arrow) and select 'Add to Home Screen'.");
-      return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") {
-      setIsInstalled(true);
-      setDeferredPrompt(null);
-    }
   }
 
   return (
@@ -363,7 +332,7 @@ export function LocalBackupPanel() {
       )}
 
       {/* ─── PWA Install Banner ─── */}
-      {!isInstalled && (
+      {!isStandalone && (
         <div className="card" style={{ padding: 16, display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--color-surface-raised)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Smartphone size={18} color="var(--color-brand)" />
@@ -379,13 +348,14 @@ export function LocalBackupPanel() {
           <button
             className="btn btn-primary"
             style={{ fontSize: 12, padding: "8px 14px", whiteSpace: "nowrap" }}
-            onClick={handleInstallPWA}
+            onClick={triggerPrompt}
           >
             Install App
           </button>
         </div>
       )}
 
+      {showIOSModal && <IOSInstallModal onClose={() => setShowIOSModal(false)} />}
     </div>
   );
 }

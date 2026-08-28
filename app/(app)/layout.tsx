@@ -25,6 +25,7 @@ import {
   Check,
 } from "lucide-react";
 import { HeaderActions } from "@/components/Sidebar";
+import { AutoInstallBanner } from "@/components/PWAInstallPrompt";
 import { AVATARS } from "@/lib/avatars";
 import { generateRandomName } from "@/lib/name-generator";
 
@@ -377,6 +378,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main>{children}</main>
 
       {/* Bottom navigation */}
+      {/* Auto Install Banner on Open (until dismissed or installed) */}
+      <AutoInstallBanner />
+
       <nav
         style={{
           position: "fixed",

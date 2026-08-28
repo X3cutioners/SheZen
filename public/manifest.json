@@ -1,27 +1,81 @@
 {
-  "name": "SheZen",
+  "name": "SheZen — Encrypted Women's Health Haven",
   "short_name": "SheZen",
-  "description": "Your private encrypted journal, cycle tracker, and vault.",
+  "description": "Your private encrypted cycle tracker, journal, and zero-knowledge health haven.",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "window-controls-overlay",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
   "background_color": "#FAF2F0",
-  "theme_color": "#FAF2F0",
-  "categories": ["health", "lifestyle"],
+  "theme_color": "#C86D7C",
+  "categories": [
+    "health",
+    "lifestyle",
+    "medical"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Cycle Tracker",
+      "short_name": "Cycle",
+      "description": "Log cycle symptoms and predictions",
+      "url": "/cycle",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Haven Journal",
+      "short_name": "Haven",
+      "description": "Encrypted private journal & notes",
+      "url": "/haven",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "prefer_related_applications": false
 }

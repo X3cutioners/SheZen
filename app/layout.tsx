@@ -11,18 +11,36 @@ import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistratio
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
-  title: "SheZen",
+  title: "SheZen — Encrypted Women's Health Haven",
   description: "Your private space. Zero trackers. Zero ads. Fully encrypted.",
+  applicationName: "SheZen",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+  },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "SheZen",
+    startupImage: [
+      {
+        url: "/splash/apple-splash-portrait.png",
+      },
+    ],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAF2F0",
+  themeColor: "#C86D7C",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -42,7 +60,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="apple-touch-startup-image" href="/splash/apple-splash-portrait.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <script dangerouslySetInnerHTML={{
           __html: `
             try {

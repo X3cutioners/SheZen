@@ -1,0 +1,66 @@
+
+  <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Background Gradient -->
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#C86D7C" />
+        <stop offset="50%" stop-color="#B8596A" />
+        <stop offset="100%" stop-color="#933D4F" />
+      </linearGradient>
+
+      <!-- Inner Glow Gradient -->
+      <linearGradient id="petalGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+        <stop offset="100%" stop-color="#FCE7EC" stop-opacity="0.75" />
+      </linearGradient>
+
+      <linearGradient id="petalGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFF0F3" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="#F9D2DC" stop-opacity="0.6" />
+      </linearGradient>
+
+      <linearGradient id="centerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#FFD1DC" />
+        <stop offset="100%" stop-color="#FFFFFF" />
+      </linearGradient>
+
+      <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#4A121E" flood-opacity="0.35" />
+      </filter>
+    </defs>
+
+    <!-- Background squircle or rect -->
+    <rect width="64" height="64" rx="14.08" fill="url(#bgGrad)" />
+
+    <!-- Scaled Lotus Artwork -->
+    <g transform="translate(0, 0) scale(0.125)">
+      <!-- Outer Petals (Left & Right) -->
+      <path d="M 256 120 C 180 180 100 280 140 370 C 180 430 256 420 256 420 C 256 420 332 430 372 370 C 412 280 332 180 256 120 Z" 
+            fill="url(#petalGrad2)" filter="url(#shadow)" opacity="0.9" />
+
+      <!-- Side Leaf Wing Left -->
+      <path d="M 256 260 C 160 250 80 320 110 390 C 150 430 220 400 256 370 Z" 
+            fill="url(#petalGrad2)" opacity="0.8" />
+
+      <!-- Side Leaf Wing Right -->
+      <path d="M 256 260 C 352 250 432 320 402 390 C 362 430 292 400 256 370 Z" 
+            fill="url(#petalGrad2)" opacity="0.8" />
+
+      <!-- Center Elegant Lotus Blossom -->
+      <path d="M 256 100 C 210 180 180 280 210 370 C 230 410 256 420 256 420 C 256 420 282 410 302 370 C 332 280 302 180 256 100 Z" 
+            fill="url(#petalGrad1)" filter="url(#shadow)" />
+
+      <!-- Center Heart/Shield Seed of Haven -->
+      <circle cx="256" cy="270" r="28" fill="url(#centerGrad)" />
+      
+      <!-- Lock Shackle Arch inside seed -->
+      <path d="M 248 266 C 248 258 264 258 264 266 L 264 274 L 248 274 Z" 
+            stroke="#933D4F" stroke-width="3" fill="none" stroke-linecap="round" />
+      <rect x="245" y="272" width="22" height="16" rx="4" fill="#933D4F" />
+      <circle cx="256" cy="279" r="2" fill="#FFFFFF" />
+
+      <!-- Gentle floating aura dot -->
+      <circle cx="256" cy="74" r="8" fill="#FFFFFF" opacity="0.9" filter="url(#shadow)" />
+    </g>
+  </svg>
+  

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Moon, Sun, Lock } from "lucide-react";
 import { lockSession } from "@/lib/crypto";
 import { useRouter } from "next/navigation";
+import { TopNavInstallButton } from "@/components/PWAInstallPrompt";
 
 export function HeaderActions() {
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
@@ -37,7 +38,10 @@ export function HeaderActions() {
   if (!mounted) return null;
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      {/* PWA Install Button — hidden if already in standalone PWA */}
+      <TopNavInstallButton />
+
       <button
         onClick={toggleTheme}
         style={{
@@ -45,14 +49,14 @@ export function HeaderActions() {
           border: "none",
           color: "var(--color-text-secondary)",
           cursor: "pointer",
-          padding: 8,
+          padding: 6,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
         aria-label="Toggle Theme"
       >
-        {theme === "dark" ? <Sun size={22} /> : <Moon size={22} />}
+        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
       </button>
 
       <button
@@ -62,14 +66,14 @@ export function HeaderActions() {
           border: "none",
           color: "var(--color-text-secondary)",
           cursor: "pointer",
-          padding: 8,
+          padding: 6,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
-        aria-label="Lock Vault"
+        aria-label="Lock SheZen"
       >
-        <Lock size={22} />
+        <Lock size={20} />
       </button>
     </div>
   );
