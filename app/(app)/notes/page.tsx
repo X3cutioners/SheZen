@@ -10,6 +10,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { saveRecord, loadAllRecords, deleteRecord } from "@/lib/local-db";
+import { X } from "lucide-react";
 
 interface HealthNote {
   date: string;
@@ -45,8 +46,6 @@ function formatDate(iso: string) {
     day: "numeric",
   });
 }
-
-import { X } from "lucide-react";
 
 export default function NotesPage() {
   const [entries, setEntries] = useState<LoadedEntry[]>([]);
@@ -321,8 +320,9 @@ export default function NotesPage() {
                       background: "transparent",
                       fontSize: 12,
                     }}
+                    title="Delete"
                   >
-                    ✕
+                    <X size={13} />
                   </button>
                 </div>
               </div>

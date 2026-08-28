@@ -365,15 +365,11 @@ export default function JournalPage() {
                       }}
                       className="btn"
                       style={{
-                        padding: "4px 8px",
-                        color: "var(--color-text-muted)",
-                        border: "none",
-                        background: "transparent",
                         fontSize: 12,
                       }}
                       title="Delete"
                     >
-                      ✕
+                      <X size={13} />
                     </button>
                   </div>
                 </div>

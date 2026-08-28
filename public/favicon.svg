@@ -1,66 +1,114 @@
 
   <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <!-- Background Gradient -->
+      <!-- Background Luxury Rose Gradient -->
       <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stop-color="#C86D7C" />
-        <stop offset="50%" stop-color="#B8596A" />
-        <stop offset="100%" stop-color="#933D4F" />
+        <stop offset="45%" stop-color="#B8596A" />
+        <stop offset="100%" stop-color="#883547" />
       </linearGradient>
 
-      <!-- Inner Glow Gradient -->
-      <linearGradient id="petalGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
-        <stop offset="100%" stop-color="#FCE7EC" stop-opacity="0.75" />
+      <!-- Soft Radiant Glow -->
+      <radialGradient id="faceGlow" cx="45%" cy="45%" r="60%">
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1" />
+        <stop offset="70%" stop-color="#FFF0F3" stop-opacity="0.96" />
+        <stop offset="100%" stop-color="#F9D4DC" stop-opacity="0.9" />
+      </radialGradient>
+
+      <!-- Hair Accent Gradient -->
+      <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFE8EE" stop-opacity="0.85" />
+        <stop offset="50%" stop-color="#F4BAC7" stop-opacity="0.65" />
+        <stop offset="100%" stop-color="#D97A8B" stop-opacity="0.4" />
       </linearGradient>
 
-      <linearGradient id="petalGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#FFF0F3" stop-opacity="0.85" />
-        <stop offset="100%" stop-color="#F9D2DC" stop-opacity="0.6" />
-      </linearGradient>
-
-      <linearGradient id="centerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#FFD1DC" />
+      <!-- Botanical Leaf Accent -->
+      <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFD6E0" />
         <stop offset="100%" stop-color="#FFFFFF" />
       </linearGradient>
 
-      <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-        <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#4A121E" flood-opacity="0.35" />
+      <!-- Drop Shadow for depth -->
+      <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#46101C" flood-opacity="0.32" />
       </filter>
     </defs>
 
-    <!-- Background squircle or rect -->
+    <!-- Background squircle or full rect for maskable -->
     <rect width="64" height="64" rx="14.08" fill="url(#bgGrad)" />
 
-    <!-- Scaled Lotus Artwork -->
+    <!-- Inner ambient aura ring -->
+    <circle cx="32" cy="32" r="26.88" fill="none" stroke="#FFFFFF" stroke-width="0.512" stroke-opacity="0.18" />
+
+    <!-- Scaled Art Group -->
     <g transform="translate(0, 0) scale(0.125)">
-      <!-- Outer Petals (Left & Right) -->
-      <path d="M 256 120 C 180 180 100 280 140 370 C 180 430 256 420 256 420 C 256 420 332 430 372 370 C 412 280 332 180 256 120 Z" 
-            fill="url(#petalGrad2)" filter="url(#shadow)" opacity="0.9" />
-
-      <!-- Side Leaf Wing Left -->
-      <path d="M 256 260 C 160 250 80 320 110 390 C 150 430 220 400 256 370 Z" 
-            fill="url(#petalGrad2)" opacity="0.8" />
-
-      <!-- Side Leaf Wing Right -->
-      <path d="M 256 260 C 352 250 432 320 402 390 C 362 430 292 400 256 370 Z" 
-            fill="url(#petalGrad2)" opacity="0.8" />
-
-      <!-- Center Elegant Lotus Blossom -->
-      <path d="M 256 100 C 210 180 180 280 210 370 C 230 410 256 420 256 420 C 256 420 282 410 302 370 C 332 280 302 180 256 100 Z" 
-            fill="url(#petalGrad1)" filter="url(#shadow)" />
-
-      <!-- Center Heart/Shield Seed of Haven -->
-      <circle cx="256" cy="270" r="28" fill="url(#centerGrad)" />
       
-      <!-- Lock Shackle Arch inside seed -->
-      <path d="M 248 266 C 248 258 264 258 264 266 L 264 274 L 248 274 Z" 
-            stroke="#933D4F" stroke-width="3" fill="none" stroke-linecap="round" />
-      <rect x="245" y="272" width="22" height="16" rx="4" fill="#933D4F" />
-      <circle cx="256" cy="279" r="2" fill="#FFFFFF" />
+      <!-- Flowing Hair Wave Background (Back of Head) -->
+      <path d="M 270 115 
+               C 340 115, 395 165, 395 240 
+               C 395 310, 360 360, 335 410 
+               C 320 435, 290 440, 275 425 
+               C 260 410, 275 385, 290 355 
+               C 315 310, 325 260, 310 210 
+               C 300 175, 280 145, 255 135 Z" 
+            fill="url(#hairGrad)" filter="url(#softShadow)" />
 
-      <!-- Gentle floating aura dot -->
-      <circle cx="256" cy="74" r="8" fill="#FFFFFF" opacity="0.9" filter="url(#shadow)" />
+      <!-- Flowing Hair Strand 2 -->
+      <path d="M 230 118 
+               C 310 118, 365 170, 365 245 
+               C 365 310, 330 360, 305 405 
+               C 295 420, 280 415, 280 395 
+               C 280 360, 310 310, 305 255 
+               C 300 200, 265 155, 220 135 Z" 
+            fill="url(#hairGrad)" opacity="0.8" />
+
+      <!-- Serene Woman Face Profile (Main Silhouette) -->
+      <path d="M 250 120
+               C 205 125, 175 165, 175 200
+               C 175 210, 180 220, 178 226
+               C 174 234, 160 246, 160 252
+               C 160 257, 174 263, 178 268
+               C 180 271, 175 277, 176 283
+               C 178 290, 186 295, 186 300
+               C 186 306, 178 312, 180 318
+               C 183 328, 196 338, 206 345
+               C 225 358, 248 368, 255 380
+               C 262 392, 260 415, 260 435
+               C 260 440, 295 440, 295 425
+               C 295 385, 305 345, 300 300
+               C 295 240, 290 180, 250 120 Z"
+            fill="url(#faceGlow)" filter="url(#softShadow)" />
+
+      <!-- Elegant Closed Eyelash / Zen Expression -->
+      <path d="M 194 236 C 202 245, 216 245, 224 236" 
+            stroke="#883547" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.85" />
+      <!-- Soft eyelash flick -->
+      <path d="M 222 238 L 227 233" 
+            stroke="#883547" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85" />
+
+      <!-- Soft Serene Brow Curve -->
+      <path d="M 186 218 C 198 210, 216 212, 228 218" 
+            stroke="#C86D7C" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6" />
+
+      <!-- Subtle Soft Lip Smile Line -->
+      <path d="M 183 292 C 189 292, 196 294, 202 291" 
+            stroke="#933D4F" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7" />
+
+      <!-- Botanical Lotus Petal Hair Adornment (Ear / Temple) -->
+      <g transform="translate(258, 240) rotate(-15)">
+        <!-- Petal 1 -->
+        <path d="M 0 0 C 15 -25, 40 -25, 45 0 C 40 25, 15 25, 0 0 Z" fill="url(#leafGrad)" opacity="0.95" filter="url(#softShadow)" />
+        <!-- Petal 2 -->
+        <path d="M 0 0 C 10 -35, 30 -35, 35 -10 C 25 15, 10 10, 0 0 Z" fill="url(#leafGrad)" opacity="0.8" />
+        <!-- Center Sparkle Seed -->
+        <circle cx="2" cy="0" r="3.5" fill="#C86D7C" />
+      </g>
+
+      <!-- Gentle Floating Zen Aura Sparkles -->
+      <circle cx="150" cy="190" r="3" fill="#FFFFFF" opacity="0.8" />
+      <circle cx="140" cy="220" r="2" fill="#FFFFFF" opacity="0.6" />
+      <circle cx="360" cy="170" r="3.5" fill="#FFFFFF" opacity="0.8" />
+      <circle cx="380" cy="210" r="2" fill="#FFFFFF" opacity="0.5" />
     </g>
   </svg>
   

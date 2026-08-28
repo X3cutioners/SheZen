@@ -299,7 +299,7 @@ export default function HavenPage() {
                       }}
                       title="Delete"
                     >
-                      ✕
+                      <X size={13} />
                     </button>
                   </div>
                 </div>

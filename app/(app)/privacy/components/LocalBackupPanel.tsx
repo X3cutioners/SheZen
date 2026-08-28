@@ -9,8 +9,7 @@
 import { useState, useEffect, useRef } from "react";
 import { exportLocalVaultFile, importLocalVaultFile, type SheZenBackupFile } from "@/lib/local-db";
 import { isBiometricsSupported, isBiometricsEnrolled, enrollBiometrics, disableBiometrics } from "@/lib/crypto/biometrics";
-import { Download, Upload, Fingerprint, Smartphone, Check, AlertCircle, Loader2, Eye, EyeOff, HardDrive } from "lucide-react";
-import { usePWAInstall, IOSInstallModal } from "@/components/PWAInstallPrompt";
+import { Download, Upload, Fingerprint, Check, AlertCircle, Loader2, Eye, EyeOff, HardDrive } from "lucide-react";
 
 export function LocalBackupPanel() {
   // Local File Backup
@@ -31,9 +30,6 @@ export function LocalBackupPanel() {
   const [showBioPass, setShowBioPass] = useState(false);
   const [bioError, setBioError] = useState("");
   const [bioLoading, setBioLoading] = useState(false);
-
-  // PWA Install
-  const { isStandalone, triggerPrompt, showIOSModal, setShowIOSModal } = usePWAInstall();
 
   useEffect(() => {
     isBiometricsSupported().then(setBioSupported);
@@ -331,31 +327,6 @@ export function LocalBackupPanel() {
         </div>
       )}
 
-      {/* ─── PWA Install Banner ─── */}
-      {!isStandalone && (
-        <div className="card" style={{ padding: 16, display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--color-surface-raised)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Smartphone size={18} color="var(--color-brand)" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 600, color: "var(--color-text-primary)" }}>
-              Install SheZen App
-            </p>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--color-text-muted)", marginTop: 2 }}>
-              Add to your Home Screen for instant offline access and standalone privacy.
-            </p>
-          </div>
-          <button
-            className="btn btn-primary"
-            style={{ fontSize: 12, padding: "8px 14px", whiteSpace: "nowrap" }}
-            onClick={triggerPrompt}
-          >
-            Install App
-          </button>
-        </div>
-      )}
-
-      {showIOSModal && <IOSInstallModal onClose={() => setShowIOSModal(false)} />}
     </div>
   );
 }
