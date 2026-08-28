@@ -7,6 +7,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ebGaramond, inter } from "./fonts";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "SheZen",
@@ -20,10 +22,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF2F0" },
-    { media: "(prefers-color-scheme: dark)", color: "#211417" },
-  ],
+  themeColor: "#FAF2F0",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -39,12 +38,28 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${ebGaramond.variable} ${inter.variable}`}
+      data-theme="light"
       suppressHydrationWarning
     >
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            try {
+              let theme = localStorage.getItem('sz_theme');
+              if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+              } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+              }
+            } catch (e) {}
+          `
+        }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <ServiceWorkerRegistration />
+        {children}
+      </body>
     </html>
   );
 }

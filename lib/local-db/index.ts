@@ -2,52 +2,42 @@
  * lib/local-db/index.ts
  * Dexie.js schema for SheZen local encrypted storage.
  *
- * ALL content stored here (journal entries, cycle logs, notes, vault items)
- * is ciphertext — plaintext never touches IndexedDB. The only plaintext
- * fields are structural metadata (id, record_type, dates) needed for local
- * querying and sync.
+ * ALL content stored here is ciphertext — plaintext never touches IndexedDB.
+ * The only non-encrypted fields are structural metadata (id, type, dates)
+ * needed for local querying and sync ordering.
  *
- * Schema:
- *  - keyStore: one row, the wrapped master key blob
- *  - records:  one row per encrypted record (journal, cycle, notes, vault)
+ * SSR-safe: the Dexie instance is created lazily inside getDB(), which only
+ * runs client-side (inside useEffect / event handlers — never at module load).
  */
 
 import Dexie, { type Table } from "dexie";
 import type { WrappedKey, EncryptedRecord } from "@/lib/crypto";
 
-// ─── Stored types ─────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type RecordType = "cycle" | "journal" | "notes" | "vault";
 
-/**
- * The key storage entry — one row per passcode wrapping.
- * Only ever has a single row (id = "local").
- */
 export interface KeyStoreEntry {
-  id: string; // always "local"
+  /** Always "local" — only one row ever exists */
+  id: string;
   wrappedKey: WrappedKey;
-  createdAt: number; // unix timestamp ms
+  createdAt: number;
 }
 
-/**
- * A single encrypted record in local storage.
- * `payload` contains the ciphertext+IV of the JSON-serialised record content.
- */
 export interface LocalRecord {
-  /** UUID generated client-side */
   id: string;
   type: RecordType;
-  /** The encrypted payload — decrypted on read using the session master key */
+  /** AES-256-GCM encrypted payload — readable only with the master key */
   payload: EncryptedRecord;
-  /** ISO 8601 date string — used for sorting and sync; NOT secret */
+  /** ISO 8601 date string — NOT secret, used for sorting */
   date: string;
-  /** Unix timestamp (ms) — used for last-write-wins sync */
+  /** Unix ms timestamp for last-write-wins sync */
   updatedAt: number;
-  /** Soft-delete flag for sync tombstones */
+  /** Soft-delete tombstone for sync reconciliation */
   deletedAt?: number;
 }
 
-// ─── Dexie database class ─────────────────────────────────────────────────────
+// ─── Dexie class ─────────────────────────────────────────────────────────────
 
 class SheZenDB extends Dexie {
   keyStore!: Table<KeyStoreEntry, string>;
@@ -55,54 +45,66 @@ class SheZenDB extends Dexie {
 
   constructor() {
     super("shezen-vault");
-
     this.version(1).stores({
-      // keyStore: just one row, keyed by "local"
       keyStore: "id, createdAt",
-
-      // records: indexed by id, type, date, updatedAt for filtering/sorting
-      // Only non-sensitive fields are indexed — the encrypted payload is opaque.
       records: "id, type, date, updatedAt, deletedAt",
     });
   }
 }
 
-export const db = new SheZenDB();
+// ─── Lazy singleton — only ever constructed in the browser ────────────────────
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+let _db: SheZenDB | null = null;
 
-/** True if this is a first-run (no key stored yet). */
+export function getDB(): SheZenDB {
+  if (typeof window === "undefined") {
+    throw new Error("SheZenDB must only be accessed client-side.");
+  }
+  if (!_db) {
+    _db = new SheZenDB();
+  }
+  return _db;
+}
+
+// ─── Key store helpers ────────────────────────────────────────────────────────
+
 export async function isFirstRun(): Promise<boolean> {
-  const count = await db.keyStore.count();
+  const count = await getDB().keyStore.where("id").equals("local").count();
   return count === 0;
 }
 
-/** Store the wrapped key (call once during setup). */
 export async function saveWrappedKey(wrappedKey: WrappedKey): Promise<void> {
-  await db.keyStore.put({
-    id: "local",
-    wrappedKey,
-    createdAt: Date.now(),
-  });
+  await getDB().keyStore.put({ id: "local", wrappedKey, createdAt: Date.now() });
 }
 
-/** Load the wrapped key (call during unlock). Returns null if not found. */
 export async function loadWrappedKey(): Promise<WrappedKey | null> {
-  const entry = await db.keyStore.get("local");
+  const entry = await getDB().keyStore.get("local");
   return entry?.wrappedKey ?? null;
 }
 
-/** Wipe all local data (export-then-delete-everything feature). */
+export async function saveDecoyWrappedKey(wrappedKey: WrappedKey): Promise<void> {
+  await getDB().keyStore.put({ id: "decoy", wrappedKey, createdAt: Date.now() });
+}
+
+export async function loadDecoyWrappedKey(): Promise<WrappedKey | null> {
+  const entry = await getDB().keyStore.get("decoy");
+  return entry?.wrappedKey ?? null;
+}
+
+export async function deleteDecoyWrappedKey(): Promise<void> {
+  await getDB().keyStore.delete("decoy");
+}
+
 export async function deleteEverything(): Promise<void> {
+  const db = getDB();
   await db.transaction("rw", db.keyStore, db.records, async () => {
     await db.keyStore.clear();
     await db.records.clear();
   });
 }
 
-// ─── Record CRUD helpers ──────────────────────────────────────────────────────
+// ─── Record CRUD ──────────────────────────────────────────────────────────────
 
-import { v4 as uuidv4 } from "uuid";
 import {
   encryptRecord,
   decryptRecord,
@@ -115,10 +117,6 @@ function requireKey(): CryptoKey {
   return key;
 }
 
-/**
- * Save an encrypted record to IndexedDB.
- * Accepts any JSON-serialisable plaintext object; encrypts it before storage.
- */
 export async function saveRecord<T extends object>(
   type: RecordType,
   data: T,
@@ -126,7 +124,7 @@ export async function saveRecord<T extends object>(
   existingId?: string
 ): Promise<string> {
   const key = requireKey();
-  const id = existingId ?? uuidv4();
+  const id = existingId ?? crypto.randomUUID();
   const payload = await encryptRecord(JSON.stringify(data), key);
   const record: LocalRecord = {
     id,
@@ -136,78 +134,127 @@ export async function saveRecord<T extends object>(
     updatedAt: Date.now(),
     deletedAt: undefined,
   };
-  await db.records.put(record);
+  await getDB().records.put(record);
   return id;
 }
 
-/**
- * Load and decrypt a single record by ID.
- * Returns null if not found or deleted.
- */
 export async function loadRecord<T>(id: string): Promise<T | null> {
   const key = requireKey();
-  const record = await db.records.get(id);
+  const record = await getDB().records.get(id);
   if (!record || record.deletedAt) return null;
-  const plaintext = await decryptRecord(record.payload, key);
-  return JSON.parse(plaintext) as T;
+  try {
+    const plaintext = await decryptRecord(record.payload, key);
+    return JSON.parse(plaintext) as T;
+  } catch (err) {
+    // Fails if encrypted with a different master key (e.g. real vs decoy)
+    return null;
+  }
 }
 
-/**
- * Load and decrypt all records of a given type, sorted by date descending.
- */
 export async function loadAllRecords<T>(
   type: RecordType
 ): Promise<Array<{ id: string; date: string; updatedAt: number; data: T }>> {
   const key = requireKey();
-  const records = await db.records
-    .where("type")
+  const records = await getDB()
+    .records.where("type")
     .equals(type)
     .filter((r) => !r.deletedAt)
     .toArray();
 
-  // Sort by date descending
   records.sort((a, b) => b.date.localeCompare(a.date));
 
   const results = await Promise.all(
     records.map(async (r) => {
-      const plaintext = await decryptRecord(r.payload, key);
-      return {
-        id: r.id,
-        date: r.date,
-        updatedAt: r.updatedAt,
-        data: JSON.parse(plaintext) as T,
-      };
+      try {
+        const plaintext = await decryptRecord(r.payload, key);
+        return {
+          id: r.id,
+          date: r.date,
+          updatedAt: r.updatedAt,
+          data: JSON.parse(plaintext) as T,
+        };
+      } catch (err) {
+        // This record was encrypted with a different key!
+        // Plausible deniability: silently ignore it so it remains hidden in this vault.
+        return null;
+      }
     })
   );
-  return results;
+
+  return results.filter((r) => r !== null) as Array<{ id: string; date: string; updatedAt: number; data: T }>;
 }
 
-/**
- * Soft-delete a record (for sync tombstone behaviour).
- */
 export async function deleteRecord(id: string): Promise<void> {
-  await db.records.update(id, { deletedAt: Date.now(), updatedAt: Date.now() });
+  await getDB().records.update(id, {
+    deletedAt: Date.now(),
+    updatedAt: Date.now(),
+  });
 }
 
-/**
- * Hard-delete a record (use only for the delete-everything flow).
- */
-export async function hardDeleteRecord(id: string): Promise<void> {
-  await db.records.delete(id);
-}
-
-/**
- * Count of live records by type.
- */
-export async function countRecords(type: RecordType): Promise<number> {
-  return db.records
-    .where("type")
-    .equals(type)
-    .filter((r) => !r.deletedAt)
-    .count();
-}
-
-/** Total live record count across all types. */
 export async function totalRecordCount(): Promise<number> {
-  return db.records.filter((r) => !r.deletedAt).count();
+  // To get an accurate count for the *current* vault, we'd technically need to decrypt everything.
+  // For the privacy screen, returning a slightly inflated count isn't terrible, but
+  // let's actually just decrypt and count to preserve deniability.
+  const key = requireKey();
+  const records = await getDB().records.filter((r) => !r.deletedAt).toArray();
+  let count = 0;
+  for (const r of records) {
+    try {
+      await decryptRecord(r.payload, key);
+      count++;
+    } catch (e) {
+      // Ignored
+    }
+  }
+  return count;
+}
+
+// ─── Local File Backup & Restore (.shezen file) ───────────────────────────────
+
+export interface SheZenBackupFile {
+  format: "shezen-encrypted-vault";
+  version: 1;
+  exportedAt: string;
+  wrappedKey: WrappedKey;
+  records: LocalRecord[];
+}
+
+export async function exportLocalVaultFile(): Promise<SheZenBackupFile> {
+  const db = getDB();
+  const wrappedKey = await loadWrappedKey();
+  if (!wrappedKey) throw new Error("Vault not found.");
+  const records = await db.records.toArray();
+
+  return {
+    format: "shezen-encrypted-vault",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    wrappedKey,
+    records,
+  };
+}
+
+export async function importLocalVaultFile(
+  backup: SheZenBackupFile,
+  passcode: string
+): Promise<{ recordCount: number }> {
+  if (backup.format !== "shezen-encrypted-vault" || !backup.wrappedKey) {
+    throw new Error("Invalid SheZen backup file format.");
+  }
+
+  // Validate the passcode against the backup's wrappedKey
+  const { unlockVault, setSessionMasterKey } = await import("@/lib/crypto");
+  const masterKey = await unlockVault(passcode, backup.wrappedKey);
+
+  // Save the imported wrapped key as our local vault
+  const db = getDB();
+  await saveWrappedKey(backup.wrappedKey);
+  setSessionMasterKey(masterKey);
+
+  // Import all records
+  if (Array.isArray(backup.records) && backup.records.length > 0) {
+    await db.records.bulkPut(backup.records);
+  }
+
+  return { recordCount: backup.records?.length || 0 };
 }

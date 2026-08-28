@@ -7,6 +7,37 @@
 
 @import "tailwindcss";
 
+/* ─── Onboarding step animations ─────────────────────────────────────────── */
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes stepInBack {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes avatarPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes shimmer {
+  from { opacity: 0.5; }
+  50%  { opacity: 1; }
+  to   { opacity: 0.5; }
+}
+
+.step-enter         { animation: stepIn     0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+.step-enter-back    { animation: stepInBack 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+.fade-up            { animation: fadeUp     0.4s  cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+.avatar-pop         { animation: avatarPop  0.3s  ease-out; }
+.shimmer            { animation: shimmer    1.6s  ease-in-out infinite; }
+
 /* ─── Design tokens — Light mode (default) ───────────────────────────────── */
 
 :root {
@@ -34,9 +65,10 @@
   --color-warning: #b08a3e;
   --color-danger: #b0413f;
 
-  /* Typography */
-  --font-voice: var(--font-garamond, "EB Garamond", Georgia, serif);
-  --font-sans: var(--font-inter, "Inter", system-ui, sans-serif);
+  /* Typography — next/font sets --font-voice and --font-sans on <html> via className.
+     These fallbacks fire only if the font hasn't loaded yet. */
+  --font-voice: "EB Garamond", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
   /* Type scale */
   --text-screen-title: 24px;
@@ -54,31 +86,22 @@
 }
 
 /* ─── Dark mode ──────────────────────────────────────────────────────────── */
-/* Toggled via [data-theme="dark"] OR by OS preference.
-   [data-theme] always wins over prefers-color-scheme. */
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-brand: #d98a96;
-    --color-brand-hover: #e2a6a0;
-    --color-bg: #211417;
-    --color-surface: #2e1b20;
-    --color-border: #4a2e33;
-    --color-text-primary: #f5e6e3;
-    --color-text-secondary: #c79e9a;
-    --color-text-muted: #8c6a66;
-  }
-}
+/* Dark mode applies ONLY when explicitly toggled via [data-theme="dark"]. */
 
 [data-theme="dark"] {
-  --color-brand: #d98a96;
-  --color-brand-hover: #e2a6a0;
-  --color-bg: #211417;
-  --color-surface: #2e1b20;
-  --color-border: #4a2e33;
-  --color-text-primary: #f5e6e3;
-  --color-text-secondary: #c79e9a;
-  --color-text-muted: #8c6a66;
+  color-scheme: dark;
+  --color-bg: #170F11;
+  --color-surface: #2E1B20;
+  --color-surface-raised: #3B242A;
+  --color-border: #5C3A42;
+  --color-border-strong: #6E4550;
+  --color-brand: #D98A96;
+  --color-brand-hover: #E2A6A0;
+  --color-brand-light: #5C323C;
+  --color-text-primary: #F5E6E3;
+  --color-text-secondary: #C79E9A;
+  --color-text-muted: #8C6A66;
+  --color-on-brand: #170F11;
 }
 
 /* ─── Base / reset ───────────────────────────────────────────────────────── */
@@ -96,7 +119,8 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color-scheme: light dark;
+  color-scheme: light;
+  overscroll-behavior: none;
 }
 
 body {
@@ -106,6 +130,31 @@ body {
   font-size: var(--text-body-ui);
   font-weight: 400;
   min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+/* ─── Input & Text Selection ─────────────────────────────────────────────── */
+
+input,
+textarea,
+select,
+[contenteditable="true"],
+.input {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text;
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* ─── Typography helpers ─────────────────────────────────────────────────── */
@@ -226,16 +275,23 @@ body {
 
 /* ─── Input primitive ────────────────────────────────────────────────────── */
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .input {
+  box-sizing: border-box;
+  display: block;
   font-family: var(--font-sans);
   font-size: var(--text-body-ui);
   font-weight: 400;
   color: var(--color-text-primary);
   background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 10px 12px;
   width: 100%;
+  max-width: 100%;
   transition: border-color 0.15s;
 }
 
@@ -246,6 +302,29 @@ body {
 .input:focus {
   outline: none;
   border-color: var(--color-brand);
+}
+
+input[type="date"] {
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  line-height: normal;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.85;
+  margin: 0;
+  padding: 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background: rgba(var(--color-brand-rgb, 168 64 96) / 0.1);
 }
 
 /* ─── Scrollbar (optional, matches palette) ──────────────────────────────── */
@@ -269,7 +348,6 @@ body {
   max-width: 480px;
   margin: 0 auto;
   padding: 24px 16px 96px; /* bottom padding accounts for fixed bottom nav */
-  min-height: 100dvh;
 }
 
 .page-header {
@@ -287,3 +365,51 @@ body {
   flex-direction: column;
   gap: 20px;
 }
+/* ─── UI Patterns ───────────────────────────────────────────────────────── */
+
+.option-button {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  padding: 10px 16px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.option-button.selected {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-on-brand);
+  font-weight: 500;
+}
+
+.option-button:hover:not(.selected) {
+  border-color: var(--color-brand-light);
+}
+
+.checkbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.checkbox-chip.checked {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.checkbox-chip input[type="checkbox"] {
+  display: none;
+}
+@import '@flaticon/flaticon-uicons/css/all/all.css';

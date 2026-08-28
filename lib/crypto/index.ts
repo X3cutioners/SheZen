@@ -61,18 +61,27 @@ export function isUnlocked(): boolean {
 
 // ─── Utility helpers ─────────────────────────────────────────────────────────
 
-function toBase64(buf: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+export function toBase64(buf: ArrayBuffer | Uint8Array): string {
+  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  return btoa(String.fromCharCode(...bytes));
 }
 
-function fromBase64(b64: string): Uint8Array {
-  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+export function fromBase64(b64: string): Uint8Array<ArrayBuffer> {
+  const buf = new ArrayBuffer(atob(b64).length);
+  const view = new Uint8Array(buf);
+  atob(b64)
+    .split("")
+    .forEach((c, i) => {
+      view[i] = c.charCodeAt(0);
+    });
+  return view as Uint8Array<ArrayBuffer>;
 }
 
-function randomBytes(n: number): Uint8Array {
-  const buf = new Uint8Array(n);
-  crypto.getRandomValues(buf);
-  return buf;
+function randomBytes(n: number): Uint8Array<ArrayBuffer> {
+  const buf = new ArrayBuffer(n);
+  const view = new Uint8Array(buf);
+  crypto.getRandomValues(view);
+  return view as Uint8Array<ArrayBuffer>;
 }
 
 // ─── Master key generation ───────────────────────────────────────────────────
@@ -129,7 +138,7 @@ const DERIVED_KEY_BYTES = 32; // 256 bits
  */
 export async function deriveWrappingKey(
   passcode: string,
-  salt: Uint8Array
+  salt: Uint8Array<ArrayBuffer>
 ): Promise<CryptoKey> {
   // Dynamic import keeps hash-wasm out of the initial bundle.
   const { argon2id } = await import("hash-wasm");
@@ -144,13 +153,14 @@ export async function deriveWrappingKey(
     outputType: "hex",
   });
 
-  const rawBytes = new Uint8Array(
-    hashHex.match(/.{2}/g)!.map((b) => parseInt(b, 16))
-  );
+  const hexPairs = hashHex.match(/.{2}/g)!;
+  const rawBuf = new ArrayBuffer(hexPairs.length);
+  const rawBytes = new Uint8Array(rawBuf);
+  hexPairs.forEach((b, i) => { rawBytes[i] = parseInt(b, 16); });
 
   return crypto.subtle.importKey(
     "raw",
-    rawBytes,
+    rawBytes as Uint8Array<ArrayBuffer>,
     { name: "AES-GCM", length: 256 },
     false, // NOT extractable — wrapping key never leaves crypto.subtle
     ["wrapKey", "unwrapKey"]
@@ -158,7 +168,7 @@ export async function deriveWrappingKey(
 }
 
 /** Generate a new random Argon2id salt (16 bytes). */
-export function generateSalt(): Uint8Array {
+export function generateSalt(): Uint8Array<ArrayBuffer> {
   return randomBytes(16);
 }
 
@@ -175,7 +185,7 @@ export function generateSalt(): Uint8Array {
 export async function wrapMasterKey(
   masterKey: CryptoKey,
   wrappingKey: CryptoKey,
-  salt: Uint8Array
+  salt: Uint8Array<ArrayBuffer>
 ): Promise<WrappedKey> {
   const iv = randomBytes(12);
   const wrapped = await crypto.subtle.wrapKey("raw", masterKey, wrappingKey, {
