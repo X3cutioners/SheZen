@@ -7,6 +7,7 @@ import {
   CalendarHeart,
   BookHeart,
   ShieldCheck,
+  Users,
   ArrowRight,
   Lock,
   Sparkles,
@@ -60,39 +61,37 @@ export default function WelcomePage() {
   return (
     <div
       style={{
-        height: "100dvh",
-        maxHeight: "100dvh",
-        overflow: "hidden",
+        minHeight: "100dvh",
         background: "var(--color-bg)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         color: "var(--color-text-primary)",
         boxSizing: "border-box",
-        padding: "10px 16px 14px",
+        padding: "16px 20px 24px",
       }}
     >
-      {/* ─── Compact Header ─── */}
+      {/* ─── Top Bar ─── */}
       <header
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          maxWidth: 680,
+          maxWidth: 720,
           margin: "0 auto",
           width: "100%",
-          padding: "2px 0",
+          padding: "4px 0",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
-              width: 28,
-              height: 28,
-              borderRadius: 7,
+              width: 32,
+              height: 32,
+              borderRadius: 9,
               overflow: "hidden",
               background: "var(--color-brand)",
-              boxShadow: "0 2px 6px rgba(var(--color-brand-rgb, 142 46 69) / 0.2)",
+              boxShadow: "0 2px 8px rgba(var(--color-brand-rgb, 142 46 69) / 0.18)",
               flexShrink: 0,
             }}
           >
@@ -101,7 +100,7 @@ export default function WelcomePage() {
           <span
             style={{
               fontFamily: "var(--font-voice)",
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: 600,
               color: "var(--color-brand)",
               letterSpacing: "0.02em",
@@ -111,27 +110,27 @@ export default function WelcomePage() {
           </span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {!isStandalone && (
             <button
               onClick={triggerPrompt}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 4,
+                gap: 5,
                 background: "var(--color-surface-raised)",
                 border: "0.5px solid var(--color-brand)",
                 color: "var(--color-brand)",
-                borderRadius: 16,
-                padding: "3px 10px",
-                fontSize: 11.5,
+                borderRadius: 20,
+                padding: "5px 12px",
+                fontSize: 12,
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
               }}
             >
-              <Download size={12} />
-              <span>Install</span>
+              <Download size={13} />
+              <span>Install App</span>
             </button>
           )}
 
@@ -142,8 +141,8 @@ export default function WelcomePage() {
               border: "0.5px solid var(--color-border)",
               color: "var(--color-text-secondary)",
               borderRadius: "50%",
-              width: 30,
-              height: 30,
+              width: 34,
+              height: 34,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -151,12 +150,12 @@ export default function WelcomePage() {
             }}
             title="Toggle theme"
           >
-            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>
       </header>
 
-      {/* ─── Hero Body (Centered & Compact) ─── */}
+      {/* ─── Hero Body (2x2 Card Grid) ─── */}
       <main
         style={{
           flex: 1,
@@ -164,229 +163,282 @@ export default function WelcomePage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          maxWidth: 580,
+          maxWidth: 680,
           margin: "0 auto",
           width: "100%",
           textAlign: "center",
-          gap: 12,
+          padding: "16px 0",
         }}
       >
-        {/* App Icon */}
+        {/* Glowing App Icon */}
         <div
           style={{
-            width: 62,
-            height: 62,
-            borderRadius: 18,
+            width: 68,
+            height: 68,
+            borderRadius: 20,
             overflow: "hidden",
-            boxShadow: "0 10px 24px rgba(var(--color-brand-rgb, 142 46 69) / 0.24)",
-            border: "1.5px solid rgba(255, 255, 255, 0.5)",
+            boxShadow: "0 10px 24px rgba(var(--color-brand-rgb, 142 46 69) / 0.22)",
+            border: "2px solid rgba(255, 255, 255, 0.6)",
+            marginBottom: 12,
             flexShrink: 0,
           }}
         >
           <img src="/icons/icon-512.png" alt="SheZen App Icon" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
 
-        {/* Title & Tagline */}
-        <div>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 5,
-              background: "color-mix(in srgb, var(--color-brand) 10%, transparent)",
-              color: "var(--color-brand)",
-              padding: "3px 10px",
-              borderRadius: 14,
-              fontSize: 11,
-              fontWeight: 600,
-              marginBottom: 6,
-            }}
-          >
-            <ShieldCheck size={12} />
-            <span>Zero-Knowledge • Local-First</span>
-          </div>
-
-          <h1
-            style={{
-              fontFamily: "var(--font-voice)",
-              fontSize: "clamp(24px, 4vw, 30px)",
-              fontWeight: 500,
-              color: "var(--color-text-primary)",
-              lineHeight: 1.15,
-              margin: "0 0 4px 0",
-            }}
-          >
-            Your Private Women’s Health Haven
-          </h1>
-
-          <p
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: 13,
-              color: "var(--color-text-secondary)",
-              lineHeight: 1.4,
-              maxWidth: 440,
-              margin: "0 auto",
-            }}
-          >
-            Encrypted cycle tracking, mindful journaling, and peer support.
-            Stored solely on your device — zero trackers, zero ads.
-          </p>
+        {/* Security Badge */}
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            background: "color-mix(in srgb, var(--color-brand) 10%, transparent)",
+            color: "var(--color-brand)",
+            padding: "4px 12px",
+            borderRadius: 16,
+            fontSize: 11.5,
+            fontWeight: 600,
+            marginBottom: 8,
+          }}
+        >
+          <ShieldCheck size={13} />
+          <span>Zero-Knowledge • Local-First Sanctuary</span>
         </div>
 
-        {/* ─── 3 Compact Feature Cards ─── */}
+        {/* Title */}
+        <h1
+          style={{
+            fontFamily: "var(--font-voice)",
+            fontSize: "clamp(26px, 4.5vw, 34px)",
+            fontWeight: 500,
+            color: "var(--color-text-primary)",
+            lineHeight: 1.2,
+            margin: "0 0 6px 0",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          Your Private Women’s Health Haven
+        </h1>
+
+        {/* Subtitle */}
+        <p
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: "clamp(13px, 3vw, 14.5px)",
+            color: "var(--color-text-secondary)",
+            lineHeight: 1.5,
+            maxWidth: 480,
+            margin: "0 auto 20px",
+          }}
+        >
+          Confidential cycle prediction, mindful journaling, and peer support.
+          Encrypted client-side on your device — zero trackers, zero ads.
+        </p>
+
+        {/* ─── 2x2 Feature Card Grid ─── */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 8,
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: 12,
             width: "100%",
             textAlign: "left",
+            marginBottom: 22,
           }}
         >
-          {/* Card 1: Cycle Prediction */}
+          {/* Card 1: Cycle & Fertility */}
           <div
             className="card"
             style={{
-              padding: "10px 12px",
+              padding: "16px",
               display: "flex",
               flexDirection: "column",
-              gap: 4,
-              borderRadius: 12,
+              alignItems: "flex-start",
+              gap: 8,
+              borderRadius: 16,
               border: "0.5px solid var(--color-border)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
             }}
           >
             <div
               style={{
-                width: 28,
-                height: 28,
-                borderRadius: 8,
-                background: "color-mix(in srgb, var(--color-brand) 14%, transparent)",
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: "color-mix(in srgb, var(--color-brand) 12%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "var(--color-brand)",
               }}
             >
-              <CalendarHeart size={15} />
+              <CalendarHeart size={18} />
             </div>
-            <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 13.5, fontWeight: 600, margin: "2px 0 0" }}>
-              Cycle & Symptoms
-            </h3>
-            <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.35 }}>
-              Period tracking, follicular/luteal phases & symptom logs.
-            </p>
+            <div>
+              <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 16, fontWeight: 600, margin: "0 0 3px", color: "var(--color-text-primary)" }}>
+                Cycle & Fertility
+              </h3>
+              <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.45 }}>
+                Period tracking, phase prediction & discrete symptom trends.
+              </p>
+            </div>
           </div>
 
           {/* Card 2: Haven Journal */}
           <div
             className="card"
             style={{
-              padding: "10px 12px",
+              padding: "16px",
               display: "flex",
               flexDirection: "column",
-              gap: 4,
-              borderRadius: 12,
+              alignItems: "flex-start",
+              gap: 8,
+              borderRadius: 16,
               border: "0.5px solid var(--color-border)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
             }}
           >
             <div
               style={{
-                width: 28,
-                height: 28,
-                borderRadius: 8,
-                background: "color-mix(in srgb, var(--color-brand) 14%, transparent)",
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: "color-mix(in srgb, var(--color-brand) 12%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "var(--color-brand)",
               }}
             >
-              <BookHeart size={15} />
+              <BookHeart size={18} />
             </div>
-            <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 13.5, fontWeight: 600, margin: "2px 0 0" }}>
-              Haven Journal
-            </h3>
-            <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.35 }}>
-              Private reflections with instant AES-256 client encryption.
-            </p>
+            <div>
+              <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 16, fontWeight: 600, margin: "0 0 3px", color: "var(--color-text-primary)" }}>
+                Haven Journal
+              </h3>
+              <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.45 }}>
+                Encrypted daily reflections & sensitive health notes with AES-256.
+              </p>
+            </div>
           </div>
 
-          {/* Card 3: Zero-Knowledge & Decoy */}
+          {/* Card 3: Anonymous Peer Community */}
           <div
             className="card"
             style={{
-              padding: "10px 12px",
+              padding: "16px",
               display: "flex",
               flexDirection: "column",
-              gap: 4,
-              borderRadius: 12,
+              alignItems: "flex-start",
+              gap: 8,
+              borderRadius: 16,
               border: "0.5px solid var(--color-border)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
             }}
           >
             <div
               style={{
-                width: 28,
-                height: 28,
-                borderRadius: 8,
-                background: "color-mix(in srgb, var(--color-brand) 14%, transparent)",
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: "color-mix(in srgb, var(--color-brand) 12%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "var(--color-brand)",
               }}
             >
-              <ShieldCheck size={15} />
+              <Users size={18} />
             </div>
-            <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 13.5, fontWeight: 600, margin: "2px 0 0" }}>
-              Decoy Duress PIN
-            </h3>
-            <p style={{ fontSize: 11, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.35 }}>
-              Secondary passcode opens an empty haven under duress.
-            </p>
+            <div>
+              <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 16, fontWeight: 600, margin: "0 0 3px", color: "var(--color-text-primary)" }}>
+                E2E Peer Chat
+              </h3>
+              <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.45 }}>
+                Anonymous avatar identity & Signal-style direct encrypted chat.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 4: Zero-Knowledge & Decoy */}
+          <div
+            className="card"
+            style={{
+              padding: "16px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: 8,
+              borderRadius: 16,
+              border: "0.5px solid var(--color-border)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: "color-mix(in srgb, var(--color-brand) 12%, transparent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--color-brand)",
+              }}
+            >
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <h3 style={{ fontFamily: "var(--font-voice)", fontSize: 16, fontWeight: 600, margin: "0 0 3px", color: "var(--color-text-primary)" }}>
+                Decoy Duress PIN
+              </h3>
+              <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.45 }}>
+                Secondary PIN opens an empty dummy haven under coercion.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* ─── Call To Action (CTA) ─── */}
-        <div style={{ width: "100%", maxWidth: 340, display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
+        <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10 }}>
           <button
             onClick={handlePrimaryCTA}
             className="btn btn-primary"
             style={{
               width: "100%",
-              padding: "11px 20px",
-              fontSize: 14,
+              padding: "13px 24px",
+              fontSize: 15,
               fontWeight: 600,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: 6,
-              boxShadow: "0 4px 12px rgba(var(--color-brand-rgb, 142 46 69) / 0.25)",
-              borderRadius: 10,
+              gap: 8,
+              boxShadow: "0 4px 16px rgba(var(--color-brand-rgb, 142 46 69) / 0.28)",
+              borderRadius: 12,
             }}
           >
             {unlocked ? (
               <>
                 <span>Open Your Haven</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={16} />
               </>
             ) : hasVault ? (
               <>
                 <Lock size={15} />
                 <span>Unlock SheZen</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={16} />
               </>
             ) : (
               <>
-                <Sparkles size={15} />
+                <Sparkles size={16} />
                 <span>Start Using SheZen</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={16} />
               </>
             )}
           </button>
 
           {/* Helper link */}
-          <div style={{ fontSize: 12 }}>
+          <div style={{ fontSize: 12.5 }}>
             {!unlocked && hasVault && (
               <Link
                 href="/setup"
@@ -420,25 +472,25 @@ export default function WelcomePage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 14,
-          fontSize: 11,
+          gap: 18,
+          fontSize: 11.5,
           color: "var(--color-text-muted)",
-          paddingTop: 8,
+          paddingTop: 12,
           borderTop: "0.5px solid var(--color-border)",
-          maxWidth: 580,
+          maxWidth: 680,
           margin: "0 auto",
           width: "100%",
           flexWrap: "wrap",
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <CheckCircle2 size={12} color="var(--color-success)" /> No email required
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <CheckCircle2 size={13} color="var(--color-success)" /> No email required
         </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <CheckCircle2 size={12} color="var(--color-success)" /> 100% Client encrypted
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <CheckCircle2 size={13} color="var(--color-success)" /> 100% Client encrypted
         </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <CheckCircle2 size={12} color="var(--color-success)" /> Zero tracking
+        <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <CheckCircle2 size={13} color="var(--color-success)" /> Zero tracking or ads
         </span>
       </footer>
 
